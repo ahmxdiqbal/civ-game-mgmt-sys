@@ -4,7 +4,6 @@ export const ONE_DAY = 86400000 // 24 hours in milliseconds
 const INCOME_UPDATE_INTERVAL = ONE_DAY
 
 function updatePlayerState(player: Player) {
-
   // Update player's resources based on income
   const now = new Date()
   if (now.getTime() - player.state.info.lastIncomeUpdate.getTime() >= INCOME_UPDATE_INTERVAL) {

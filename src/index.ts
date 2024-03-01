@@ -4,10 +4,11 @@ export const ONE_DAY = 86400000 // 24 hours in milliseconds
 const INCOME_UPDATE_INTERVAL = ONE_DAY
 
 function updatePlayerState(player: Player) {
-  // Update player's resources based on income
+  // Update player's storage based on income
   const now = new Date()
   if (now.getTime() - player.state.info.lastIncomeUpdate.getTime() >= INCOME_UPDATE_INTERVAL) {
-    updateResources(player, player.state.income)
+    updateStorage(player, player.state.income)
+    updateStorage(player, player.state.expenses)
     player.state.info.lastIncomeUpdate = now
   }
 
@@ -18,7 +19,7 @@ function updatePlayerState(player: Player) {
         transaction = transaction as Investment
         player.state.cities[transaction.city].industries[transaction.industry]++
         player.state.cities[transaction.city].isWalled = true
-        updateResources(player, transaction.resourceChange)
+        updateStorage(player, transaction.resourceChange)
         break
       case 'mobilize':
         transaction = transaction as Mobilize
@@ -28,13 +29,13 @@ function updatePlayerState(player: Player) {
         } else if (transaction.mobilizeFrom === 'population') {
           player.state.military.army.active += transaction.numberOfTroops
         }
-        updateResources(player, transaction.resourceChange)
+        updateStorage(player, transaction.resourceChange)
         break
       case 'build-ship':
         transaction = transaction as BuildShips
         player.state.military.navy.warships += transaction.warships
         player.state.military.navy.battleships += transaction.battleships
-        updateResources(player, transaction.resourceChange)
+        updateStorage(player, transaction.resourceChange)
         break
       default:
         console.error('Invalid transaction type')
@@ -43,10 +44,10 @@ function updatePlayerState(player: Player) {
   }
 }
 
-function updateResources(player: Player, resourceChange: Resources) {
-  player.state.resources.gold += resourceChange.gold
-  player.state.resources.iron += resourceChange.iron
-  player.state.resources.lumber += resourceChange.lumber
-  player.state.resources.grain += resourceChange.grain
-  player.state.resources.livestock += resourceChange.livestock
+function updateStorage(player: Player, resourceChange: Resources) {
+  player.state.storage.gold += resourceChange.gold
+  player.state.storage.iron += resourceChange.iron
+  player.state.storage.lumber += resourceChange.lumber
+  player.state.storage.grain += resourceChange.grain
+  player.state.storage.livestock += resourceChange.livestock
 }

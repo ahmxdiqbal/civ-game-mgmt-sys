@@ -25,8 +25,9 @@ interface PlayerInfo {
 export interface Player {
   state: {
     info: PlayerInfo
-    resources: Resources
+    storage: Resources
     income: Resources
+    expenses: Resources
     cities: CityList
     military: Military
   }

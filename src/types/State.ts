@@ -9,10 +9,10 @@ export interface Resources {
 
 interface Industries {
   militaryBases: number
-  ironForge: number
-  lumberMill: number
-  grainFarm: number
-  livestockRanch: number
+  ironForges: number
+  lumberMills: number
+  grainFarms: number
+  livestockRanchs: number
 }
 
 export interface City {

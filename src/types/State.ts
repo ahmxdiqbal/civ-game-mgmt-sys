@@ -12,7 +12,7 @@ interface Industries {
   ironForges: number
   lumberMills: number
   grainFarms: number
-  livestockRanchs: number
+  livestockRanches: number
 }
 
 export interface City {

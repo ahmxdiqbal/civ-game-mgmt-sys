@@ -7,8 +7,7 @@ function updatePlayerState(player: Player) {
   // Update player's storage based on income
   const now = new Date()
   if (now.getTime() - player.state.info.lastIncomeUpdate.getTime() >= INCOME_UPDATE_INTERVAL) {
-    updateStorage(player, player.state.income)
-    updateStorage(player, player.state.expenses)
+    applyDailyChanges(player)
     player.state.info.lastIncomeUpdate = now
   }
 
@@ -50,4 +49,9 @@ function updateStorage(player: Player, resourceChange: Resources) {
   player.state.storage.lumber += resourceChange.lumber
   player.state.storage.grain += resourceChange.grain
   player.state.storage.livestock += resourceChange.livestock
+}
+
+export function applyDailyChanges(player: Player) {
+  updateStorage(player, player.state.income)
+  updateStorage(player, player.state.expenses)
 }

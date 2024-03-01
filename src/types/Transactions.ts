@@ -2,7 +2,7 @@ import { Resources } from './State'
 
 export type Transaction = Investment | Mobilize | BuildShips
 export type TransactionType = 'investment' | 'trade' | 'mobilize' | 'build-ship'
-export type Industry = 'military-base' | 'iron-forge' | 'lumber-mill' | 'grain-farm' | 'livestock-ranch'
+export type Industry = 'militaryBases' | 'ironForges' | 'lumberMills' | 'grainFarms' | 'livestockRanches'
 export type MobilizationSource = 'reserve' | 'population'
 export type ShipType = 'warship' | 'battle-ship'
 

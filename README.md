@@ -8,7 +8,7 @@ You need to have node.js on your machine. You can install it via nvm. Follow the
 You will also need git to manage the code. You can install it via the instructions here:  
 [Git Installation Guide](https://git-scm.com/download/mac)
 
-You will also want ts-node to run the typescript file. You can install it using npm(will be installed if you use nvm) using this command:
+You will also want ts-node to run the typescript file. You can install it using npm(will be installed if you use nvm) using this command:  
 `npm i -g ts-node`
 
 ## To run

@@ -7,7 +7,7 @@ export interface Resources {
   livestock: number
 }
 
-interface Industries {
+export interface Industries {
   militaryBases: number
   ironForges: number
   lumberMills: number

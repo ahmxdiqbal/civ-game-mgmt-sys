@@ -17,7 +17,11 @@ function updatePlayerState(player: Player) {
       case 'investment':
         transaction = transaction as Investment
         player.state.cities[transaction.city].industries[transaction.industry]++
-        player.state.cities[transaction.city].isWalled = true
+        player.state.assests[transaction.industry]++
+        if (player.state.cities[transaction.city].isWalled === false) {
+          player.state.cities[transaction.city].isWalled = true
+          player.state.assests.majorCities++
+        }
         updateStorage(player, transaction.resourceChange)
         break
       case 'mobilize':
@@ -27,6 +31,7 @@ function updatePlayerState(player: Player) {
           player.state.military.army.active += transaction.numberOfTroops
         } else if (transaction.mobilizeFrom === 'population') {
           player.state.military.army.active += transaction.numberOfTroops
+          player.state.assests.population -= transaction.numberOfTroops
         }
         updateStorage(player, transaction.resourceChange)
         break

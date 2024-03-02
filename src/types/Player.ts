@@ -1,4 +1,4 @@
-import { Resources, City } from './State'
+import { Resources, City, Industries } from './State'
 import { Transaction } from './Transactions'
 
 type CityList = {
@@ -25,6 +25,10 @@ interface PlayerInfo {
 export interface Player {
   state: {
     info: PlayerInfo
+    assests: {
+      population: number
+      majorCities: number
+    } & Industries
     storage: Resources
     income: Resources
     expenses: Resources

@@ -1,5 +1,6 @@
 import { Player, Resources, Investment, Mobilize, BuildShips } from './types';
 
+export const START_OF_GAME = new Date('2024-02-23T00:00:00.000Z')
 export const ONE_DAY = 86400000 // 24 hours in milliseconds
 const INCOME_UPDATE_INTERVAL = ONE_DAY
 
@@ -60,3 +61,35 @@ export function applyDailyChanges(player: Player) {
   updateStorage(player, player.state.income)
   updateStorage(player, player.state.expenses)
 }
+
+/*
+
+for every player:
+  function getTransactions:
+    get transactions from google sheet
+      parse transactions from sheet and create transactions 
+
+    insert income and expense into transaction sorted by timeSubmitted
+
+  function processTransactions:
+    apply each transaction
+      we need to mark transacton as success or fail
+        if success, remove from pendingTransactions
+        if fail 
+
+
+Mustafa Ahmad TODOs:
+
+add population to city object
+
+create insertSorted function
+create dummy transactions list
+use insertSorted to insert income and expense into transactions
+
+switch from using switch statement to using if else ladder to process transactions
+process transactions in order of timeSubmitted
+
+support maneuver transaction;
+  move troops from one city you own to another city you own, major or minor
+
+*/

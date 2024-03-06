@@ -1,25 +1,8 @@
-import { Resources, City, Industries } from './State'
+import { Resources, City, Industries, PlayerInfo, Military } from './State'
 import { Transaction } from './Transactions'
 
 type CityList = {
   [key: string]: City
-}
-
-interface Military {
-  army: {
-    active: number
-    reserve: number
-  }
-  navy: {
-    warships: number
-    battleships: number
-  }
-}
-
-interface PlayerInfo {
-  name: string
-  nation: string
-  lastIncomeUpdate: Date
 }
 
 export interface Player {

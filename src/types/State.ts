@@ -17,7 +17,25 @@ export interface Industries {
 
 export interface City {
   name: string
+  population: number
   isWalled: boolean
   troopsGarrisoned: number
   industries: Industries
+}
+
+export interface Military {
+  army: {
+    active: number
+    reserve: number
+  }
+  navy: {
+    warships: number
+    battleships: number
+  }
+}
+
+export interface PlayerInfo {
+  name: string
+  nation: string
+  lastIncomeUpdate: Date
 }

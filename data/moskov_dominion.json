@@ -29,6 +29,7 @@
     "cities": {
       "Moskow": {
         "name": "Moskow",
+        "population": 1000000,
         "isWalled": true,
         "troopsGarrisoned": 9000,
         "industries": {
@@ -41,6 +42,7 @@
       },
       "Kiev": {
         "name": "Kiev",
+        "population": 1000000,
         "isWalled": true,
         "troopsGarrisoned": 0,
         "industries": {
@@ -53,6 +55,7 @@
       },
       "Berlin": {
         "name": "Berlin",
+        "population": 1000000,
         "isWalled": true,
         "troopsGarrisoned": 0,
         "industries": {
@@ -65,6 +68,7 @@
       },
       "Bursa": {
         "name": "Bursa",
+        "population": 1000000,
         "isWalled": true,
         "troopsGarrisoned": 8000,
         "industries": {
@@ -77,6 +81,7 @@
       },
       "Dublin": {
         "name": "Dublin",
+        "population": 1000000,
         "isWalled": false,
         "troopsGarrisoned": 0,
         "industries": {
@@ -89,6 +94,7 @@
       },
       "New Hanover": {
         "name": "New Hanover",
+        "population": 1000000,
         "isWalled": false,
         "troopsGarrisoned": 0,
         "industries": {
@@ -101,6 +107,7 @@
       },
       "Munich": {
         "name": "Munich",
+        "population": 1000000,
         "isWalled": false,
         "troopsGarrisoned": 0,
         "industries": {

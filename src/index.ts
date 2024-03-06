@@ -1,55 +1,20 @@
-import { Player, Resources, Investment, Mobilize, BuildShips } from './types';
+import * as Types from './types';
+import { insertSorted } from './Utils';
+
+
+// Constants
 
 export const START_OF_GAME = new Date('2024-02-23T00:00:00.000Z')
 export const ONE_DAY = 86400000 // 24 hours in milliseconds
 const INCOME_UPDATE_INTERVAL = ONE_DAY
 
-function updatePlayerState(player: Player) {
-  // Update player's storage based on income
-  const now = new Date()
-  if (now.getTime() - player.state.info.lastIncomeUpdate.getTime() >= INCOME_UPDATE_INTERVAL) {
-    applyDailyChanges(player)
-    player.state.info.lastIncomeUpdate = now
-  }
+// Variables
 
-  // Process pending transactions
-  for (let transaction of player.transactions.pendingTransactions) {
-    switch (transaction.transactionType) {
-      case 'investment':
-        transaction = transaction as Investment
-        player.state.cities[transaction.city].industries[transaction.industry]++
-        player.state.assests[transaction.industry]++
-        if (player.state.cities[transaction.city].isWalled === false) {
-          player.state.cities[transaction.city].isWalled = true
-          player.state.assests.majorCities++
-        }
-        updateStorage(player, transaction.resourceChange)
-        break
-      case 'mobilize':
-        transaction = transaction as Mobilize
-        if (transaction.mobilizeFrom === 'reserve') {
-          player.state.military.army.reserve -= transaction.numberOfTroops
-          player.state.military.army.active += transaction.numberOfTroops
-        } else if (transaction.mobilizeFrom === 'population') {
-          player.state.military.army.active += transaction.numberOfTroops
-          player.state.assests.population -= transaction.numberOfTroops
-        }
-        updateStorage(player, transaction.resourceChange)
-        break
-      case 'build-ship':
-        transaction = transaction as BuildShips
-        player.state.military.navy.warships += transaction.warships
-        player.state.military.navy.battleships += transaction.battleships
-        updateStorage(player, transaction.resourceChange)
-        break
-      default:
-        console.error('Invalid transaction type')
-        break
-    }
-  }
-}
+const players: Types.Player[] = []
 
-function updateStorage(player: Player, resourceChange: Resources) {
+// Functions
+
+function updateStorage(player: Types.Player, resourceChange: Types.Resources) {
   player.state.storage.gold += resourceChange.gold
   player.state.storage.iron += resourceChange.iron
   player.state.storage.lumber += resourceChange.lumber
@@ -57,13 +22,101 @@ function updateStorage(player: Player, resourceChange: Resources) {
   player.state.storage.livestock += resourceChange.livestock
 }
 
-export function applyDailyChanges(player: Player) {
-  updateStorage(player, player.state.income)
-  updateStorage(player, player.state.expenses)
+function parseAndInsertTransactionsFromSheet(player: Types.Player): void {
+
+}
+
+function insertIncomeAndExpenseTransactions(player: Types.Player): void {
+  const now = new Date()
+  while (now.getTime() > player.state.info.lastIncomeUpdate.getTime() + INCOME_UPDATE_INTERVAL) {
+    player.state.info.lastIncomeUpdate = new Date(player.state.info.lastIncomeUpdate.getTime() + INCOME_UPDATE_INTERVAL)
+
+    const income = {
+      transactionType: 'income',
+      timeSubmitted: player.state.info.lastIncomeUpdate,
+      timeUntilCompletion: 0,
+      resourceChange: null
+    } as unknown as Types.BaseTransaction
+
+    const expenses = {
+      transactionType: 'expenses',
+      timeSubmitted: player.state.info.lastIncomeUpdate,
+      timeUntilCompletion: 0,
+      resourceChange: null
+    } as unknown as Types.BaseTransaction
+
+    insertSorted(player.transactions.pendingTransactions, income)
+    insertSorted(player.transactions.pendingTransactions, expenses)
+    insertSorted(player.transactions.allTransactions, income)
+    insertSorted(player.transactions.allTransactions, expenses)
+  }
+}
+
+function getTransactions(player: Types.Player): void {
+  parseAndInsertTransactionsFromSheet(player)
+
+  // if statement to calculate whether income and expenses need to be inserted into lists of transactions
+  insertIncomeAndExpenseTransactions(player)
+}
+
+function processTransactions(player: Types.Player): void {
+  for (let transaction of player.transactions.pendingTransactions) {
+    if (transaction.transactionType === 'income') {
+      // Apply income
+      updateStorage(player, player.state.income)
+      player.transactions.pendingTransactions.shift()
+    } else if (transaction.transactionType === 'expenses') {
+      // Apply expenses
+      updateStorage(player, player.state.expenses)
+      player.transactions.pendingTransactions.shift()
+    } else if (transaction.transactionType === 'investment') {
+      const investmentTransaction = transaction as Types.Investment
+      player.state.cities[investmentTransaction.city].industries[investmentTransaction.industry]++
+      player.state.assests[investmentTransaction.industry]++
+      if (player.state.cities[investmentTransaction.city].isWalled === false) {
+        player.state.cities[investmentTransaction.city].isWalled = true
+        player.state.assests.majorCities++
+      }
+      updateStorage(player, investmentTransaction.resourceChange)
+      player.transactions.pendingTransactions.shift()
+    } else if (transaction.transactionType === 'mobilize') {
+      const mobilizeTransaction = transaction as Types.Mobilize
+      if (mobilizeTransaction.mobilizeFrom === 'reserve') {
+        player.state.military.army.reserve -= mobilizeTransaction.numberOfTroops
+        player.state.military.army.active += mobilizeTransaction.numberOfTroops
+      } else if (mobilizeTransaction.mobilizeFrom === 'population') {
+        player.state.military.army.active += mobilizeTransaction.numberOfTroops
+        player.state.assests.population -= mobilizeTransaction.numberOfTroops
+      }
+      updateStorage(player, mobilizeTransaction.resourceChange)
+      player.transactions.pendingTransactions.shift()
+    } else if (transaction.transactionType === 'build-ship') {
+      const buildShipTransaction = transaction as Types.BuildShips
+      player.state.military.navy.warships += buildShipTransaction.warships
+      player.state.military.navy.battleships += buildShipTransaction.battleships
+      updateStorage(player, buildShipTransaction.resourceChange)
+      player.transactions.pendingTransactions.shift()
+    } else if (transaction.transactionType === 'maneuver') {
+      const maneuverTransaction = transaction as Types.Maneuver
+      player.state.cities[maneuverTransaction.from].troopsGarrisoned -= maneuverTransaction.troops
+      player.state.cities[maneuverTransaction.to].troopsGarrisoned += maneuverTransaction.troops
+      player.transactions.pendingTransactions.shift()
+    }
+  }
+}
+
+// Entry point
+
+function start(): void {
+  for (const player of players) {
+    getTransactions(player)
+
+    processTransactions(player)
+    
+  }
 }
 
 /*
-
 
 on startup:
   for every player:
@@ -78,31 +131,5 @@ on startup:
         we need to mark transacton as success or fail
           if success, remove from pendingTransactions
           if fail 
-
-
-Mustafa Ahmad TODOs:
-
-add population to city object
-
-create insertSorted  - prefer binary search
-create dummy transactions list
-use insertSorted to insert income and expense into transactions
-
-switch from using switch statement to using if else ladder to process transactions
-process transactions in order of timeSubmitted
-
-support maneuver transaction:
-  move troops from one city you own to another city you own, major or minor
-
-support import and export transactions:
-  for a trade to be successful, 
-    both players must have the resources they are trading
-    both players must submit a compatibat and reciprocative transaction
-
-  ex trade. moskov trade with aurelian 100 gold for 10 iron
-
-  moskov request will contain: partner: aurelian, import: 10 iron, export: 100 gold
-  aurelian request will contain: partner: moskov, import: 100 gold, export: 10 iron
-
 
 */

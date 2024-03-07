@@ -1,6 +1,7 @@
 import * as Types from './types';
 import { insertSorted } from './Utils';
-
+import fs from 'fs';
+import path from 'path';
 
 // Constants
 
@@ -10,7 +11,7 @@ const INCOME_UPDATE_INTERVAL = ONE_DAY
 
 // Variables
 
-const players: Types.Player[] = []
+const players: Map<string, Types.Player> = new Map()
 
 // Functions
 
@@ -20,6 +21,35 @@ function updateStorage(player: Types.Player, resourceChange: Types.Resources) {
   player.state.storage.lumber += resourceChange.lumber
   player.state.storage.grain += resourceChange.grain
   player.state.storage.livestock += resourceChange.livestock
+}
+
+function loadPlayerData() {
+  const dataDirectory = path.join(__dirname, '..', 'data');
+
+  try {
+    const files = fs.readdirSync(dataDirectory);
+
+    for (const file of files) {
+      if (path.extname(file) === '.json') { // Ensure the file is a JSON file
+        const filePath = path.join(dataDirectory, file);
+
+        const playerFile = fs.readFileSync(filePath, 'utf8');
+
+        try {
+          const playerData = JSON.parse(playerFile);
+
+          players.set(playerData.state.info.nation, playerData);
+        } catch (err) {
+          console.error(`Error parsing JSON from file: ${file}`, err);
+        }
+      }
+    }
+    console.log('Loaded Player Data');
+  } catch (err) {
+    console.error("Could not list the directory or read files", err);
+  }
+
+  console.log('end of loadPlayerData');
 }
 
 function parseAndInsertTransactionsFromSheet(player: Types.Player): void {
@@ -52,11 +82,50 @@ function insertIncomeAndExpenseTransactions(player: Types.Player): void {
   }
 }
 
-function getTransactions(player: Types.Player): void {
-  parseAndInsertTransactionsFromSheet(player)
+function pushTransaction(player: Types.Player, transaction: Types.Transaction): void {
+  insertSorted(player.transactions.pendingTransactions, transaction)
+  insertSorted(player.transactions.allTransactions, transaction)
+}
 
-  // if statement to calculate whether income and expenses need to be inserted into lists of transactions
-  insertIncomeAndExpenseTransactions(player)
+function getTransactions(player: Types.Player): void {
+  //parseAndInsertTransactionsFromSheet(player)
+
+  //insertIncomeAndExpenseTransactions(player)
+
+  const dummyTransactions: Types.Transaction[] = [
+    {
+      transactionType: 'investment',
+      timeSubmitted: new Date('2024-02-23T01:00:00.000Z'),
+      timeUntilCompletion: 0,
+      resourceChange: {
+        gold: -100,
+        iron: -100,
+        lumber: -100,
+        grain: 0,
+        livestock: 0
+      },
+      city: 'Bursa',
+      industry: 'militaryBases'
+    },
+    {
+      transactionType: 'mobilize',
+      timeSubmitted: new Date('2024-02-23T02:00:00.000Z'),
+      timeUntilCompletion: 0,
+      resourceChange: {
+        gold: -10,
+        iron: -1,
+        lumber: 0,
+        grain: 0,
+        livestock: 0
+      },
+      mobilizeFrom: 'reserve',
+      numberOfTroops: 1000
+    },
+  ]
+
+  for (const transaction of dummyTransactions) {
+    pushTransaction(player, transaction)
+  }
 }
 
 function processTransactions(player: Types.Player): void {
@@ -108,13 +177,19 @@ function processTransactions(player: Types.Player): void {
 // Entry point
 
 function start(): void {
-  for (const player of players) {
+  loadPlayerData()
+
+  for (const player of players.values()) {
+    console.log(player.state.info.nation)
+
     getTransactions(player)
 
-    processTransactions(player)
+    //processTransactions(player)
     
   }
 }
+
+start()
 
 /*
 

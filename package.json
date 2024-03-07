@@ -1,0 +1,25 @@
+{
+  "name": "civ-game-mgmt-sys",
+  "version": "1.0.0",
+  "description": "A management system for a civilization game that tracks the state of the players through the use of trnasactions that modify the state",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmxdiqbal/civ-game-mgmt-sys.git"
+  },
+  "author": "Ahmed Iqbal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahmxdiqbal/civ-game-mgmt-sys/issues"
+  },
+  "homepage": "https://github.com/ahmxdiqbal/civ-game-mgmt-sys#readme",
+  "devDependencies": {
+    "@types/node": "^20.11.25"
+  }
+}
